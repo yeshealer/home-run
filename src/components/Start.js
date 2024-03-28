@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import HeaderText from "./gadgets/HeaderText";
 import ScoreBoard from "./gadgets/ScoreBoard";
 import { useBaseStore, useStartStore } from "../hooks";
@@ -10,18 +10,14 @@ export default function Start() {
     updateScore: state.updateScore,
     updatePageState: state.updatePageState,
   }));
-  const { updateTextA, updateTextB } = useStartStore((state) => ({
-    updateTextA: state.updateTextA,
-    updateTextB: state.updateTextB,
-  }));
-
   const { generateEquation, randomNumber, getCorrectResult } = useActions();
-  const [userResult, setUserResult] = useState("0");
 
+  const [userResult, setUserResult] = useState("0");
   const [equation, setEquation] = useState("");
 
   const checkAnswer = () => {
     const correctResult = getCorrectResult();
+    if (!userResult) return;
     if (correctResult === Number(userResult)) {
       updateScore(score + 1);
       updatePageState("success");
@@ -33,10 +29,8 @@ export default function Start() {
   const startAction = () => {
     const generatedTextA = randomNumber();
     const generatedTextB = randomNumber();
-    updateTextA(generatedTextA);
-    updateTextB(generatedTextB);
-    const equation = generateEquation(generatedTextA, generatedTextB);
-    setEquation(equation);
+    const newEquation = generateEquation(generatedTextA, generatedTextB);
+    setEquation(newEquation);
   };
 
   const handleChange = (event) => {

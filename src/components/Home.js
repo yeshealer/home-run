@@ -19,7 +19,15 @@ export default function Home() {
   };
 
   const onChangeGameType = (event) => {
-    updateGameType(event.target.value);
+    if (gameType.includes(event.target.value)) {
+      const newGameType = gameType.filter(
+        (item) => item !== event.target.value
+      );
+      updateGameType(newGameType);
+    } else {
+      gameType.push(event.target.value);
+      updateGameType(gameType);
+    }
   };
 
   return (
@@ -35,7 +43,7 @@ export default function Home() {
                 value={item.value}
                 className="w-6 h-6 checkbox checkbox-accent"
                 onChange={onChangeGameType}
-                checked={item.value === gameType}
+                checked={gameType.includes(item.value)}
               />
               {item.label}
             </div>

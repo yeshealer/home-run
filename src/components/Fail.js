@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import HeaderText from "./gadgets/HeaderText";
 import ScoreBoard from "./gadgets/ScoreBoard";
-import { useBaseStore, useStartStore } from "../hooks";
+import { useBaseStore, useHomeStore, useStartStore } from "../hooks";
 import useActions from "../hooks/useActions";
 
 export default function Fail() {
@@ -10,12 +10,25 @@ export default function Fail() {
     textA: state.textA,
     textB: state.textB,
   }));
+  const selectedGameType = useHomeStore((state) => state.selectedGameType);
+  const { getCorrectResult, getSymbol } = useActions();
 
-  const { generateEquation, getCorrectResult } = useActions();
+  const [equation, setEquation] = useState("");
+
+  const onStartAction = useCallback(() => {
+    const symbol = getSymbol(selectedGameType);
+    const equation = textA + " " + symbol + " " + textB + " " + "=";
+    const correctResult = getCorrectResult();
+    setEquation(equation + correctResult);
+  }, [textA, textB]);
 
   const onNextQuestion = () => {
     updatePageState("start");
   };
+
+  useEffect(() => {
+    onStartAction();
+  }, []);
 
   return (
     <div className="text-xl flex flex-col items-center bg-white max-w-2xl py-6 rounded-3xl gap-6">
@@ -27,9 +40,7 @@ export default function Fail() {
       <div className="text-3xl text-black">
         Incorrect. The correct answer is
       </div>
-      <div className="text-[70px] text-black mt-4">
-        {generateEquation(textA, textB) + getCorrectResult()}
-      </div>
+      <div className="text-[70px] text-black mt-4">{equation}</div>
       <button
         className="bg-[#4681F4] text-white text-xl py-4 px-20 mt-6"
         onClick={onNextQuestion}

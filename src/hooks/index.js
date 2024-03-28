@@ -1,8 +1,11 @@
 import { create } from "zustand";
 
 export const useHomeStore = create((set) => ({
-  gameType: "add",
+  gameType: ["add"],
+  selectedGameType: "add",
   updateGameType: (gameType) => set(() => ({ gameType: gameType })),
+  updateSelectedGameType: (selectedGameType) =>
+    set(() => ({ selectedGameType: selectedGameType })),
 }));
 
 export const useBaseStore = create((set) => ({
